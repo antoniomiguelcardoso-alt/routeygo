@@ -1,48 +1,197 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Routeygo - Roteiro Perfeito</title>
+    <title>Routeygo - O teu Roteiro Perfeito</title>
     <style>
-        body { font-family: sans-serif; background: #0f172a; color: white; padding: 40px; text-align: center; }
-        .card { background: #1e293b; max-width: 500px; margin: 0 auto; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-        button { background: #10b981; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-size: 16px; cursor: pointer; font-weight: bold; }
-        button:hover { background: #059669; }
-        #resultado { margin-top: 20px; text-align: left; background: #0f172a; padding: 15px; border-radius: 6px; display: none; white-space: pre-wrap; }
+        :root {
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --accent: #10b981;
+            --accent-hover: #059669;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: var(--bg-card);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            color: var(--text);
+            text-align: center;
+        }
+        .subtitle {
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 32px;
+            font-size: 0.95rem;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--bg-main);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        button {
+            width: 100%;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: var(--accent-hover);
+        }
+        button:disabled {
+            background-color: #334155;
+            cursor: not-allowed;
+        }
+        .output-box {
+            margin-top: 30px;
+            background-color: var(--bg-main);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: left;
+            display: none;
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+        .loading {
+            color: var(--accent);
+            font-weight: 500;
+            text-align: center;
+            display: none;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <h2>Roteiro Perfeito 🎒</h2>
-        <p>Clique abaixo para testar a ligação direta à API online.</p>
+    <div class="container">
+        <h1>Routeygo 🎒</h1>
+        <p class="subtitle">Planeia a tua próxima aventura fotográfica ou cultural instantaneamente</p>
         
-        <button id="btnGerar">Gerar Roteiro de Teste</button>
-        <div id="resultado">A processar com Gemini 2.0 Flash...</div>
+        <div class="form-group">
+            <label for="destino">Destino / Cidade</label>
+            <input type="text" id="destino" placeholder="Ex: Vigo, Guimarães, Porto..." required>
+        </div>
+
+        <div class="form-group">
+            <label for="dias">Duração (Dias)</label>
+            <select id="dias">
+                <option value="1">1 Dia</option>
+                <option value="2">2 Dias</option>
+                <option value="3">3 Dias</option>
+                <option value="5">5 Dias</option>
+                <option value="7">1 Semana</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="estilo">Estilo de Viagem</label>
+            <select id="estilo">
+                <option value="fotografia de paisagem e arquitetura de pedra">Fotografia (Paisagem/Arquitetura)</option>
+                <option value="cultural e histórico detalhado">Cultural & Histórico</option>
+                <option value="gastronómico e relaxado">Gastronómico / Lazer</option>
+                <option value="aventura e natureza">Natureza & Aventura</option>
+            </select>
+        </div>
+
+        <button id="btnGerar">Gerar Itinerário Inteligente</button>
+        
+        <div id="loading" class="loading">A construir o teu roteiro personalizado...</div>
+        <div id="resultado" class="output-box"></div>
     </div>
 
     <script>
         document.getElementById('btnGerar').addEventListener('click', async () => {
+            const destino = document.getElementById('destino').value.trim();
+            const dias = document.getElementById('dias').value;
+            const estilo = document.getElementById('estilo').value;
+            
+            const btn = document.getElementById('btnGerar');
+            const loader = document.getElementById('loading');
             const resDiv = document.getElementById('resultado');
-            resDiv.style.display = 'block';
-            resDiv.innerText = 'A ligar à API em produção...';
+
+            if (!destino) {
+                alert('Por favor, introduz um destino.');
+                return;
+            }
+
+            btn.disabled = true;
+            loader.style.display = 'block';
+            resDiv.style.display = 'none';
+
+            const promptConstruido = `Gera um itinerário detalhado de ${dias} dia(s) para ${destino}, focado estritamente em ${estilo}. Inclui dicas práticas de locais e horários ideais.`;
 
             try {
                 const response = await fetch('/api/claude', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ prompt: 'Dá-me 3 locais obrigatórios para fotografar em Vigo.' })
+                    body: JSON.stringify({ prompt: promptConstruido })
                 });
                 
                 const data = await response.json();
+                
+                loader.style.display = 'none';
+                btn.disabled = false;
+                resDiv.style.display = 'block';
+
                 if (data.text) {
                     resDiv.innerText = data.text;
                 } else {
-                    resDiv.innerText = 'Erro na resposta: ' + JSON.stringify(data);
+                    resDiv.innerText = 'Nota técnica: A API respondeu mas a cota da chave Google pode estar esgotada hoje. Mensagem: ' + (data.error || 'Erro desconhecido');
                 }
             } catch (err) {
-                resDiv.innerText = 'Erro ao ligar ao servidor: ' + err.message;
+                loader.style.display = 'none';
+                btn.disabled = false;
+                resDiv.style.display = 'block';
+                resDiv.innerText = 'Erro crítico ao ligar ao servidor: ' + err.message;
             }
         });
     </script>
