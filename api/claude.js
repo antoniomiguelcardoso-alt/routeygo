@@ -25,7 +25,7 @@ module.exports = async function handler(req, res) {
       return res.status(500).json({ error: "GEMINI_API_KEY not configured" });
     }
 
-    // Modelos oficiais ativos e funcionais
+    // Modelos oficiais estáveis da Google
     const modelCandidates = [
       { name: "gemini-2.0-flash" },
       { name: "gemini-1.5-flash" },
@@ -41,7 +41,6 @@ module.exports = async function handler(req, res) {
 
     outer: for (const model of modelCandidates) {
       for (const action of endpointOrder) {
-        // Atualizado para a API estável v1beta
         const url = `https://generativelanguage.googleapis.com/v1beta/models/${model.name}:${action}?key=${apiKey}`;
         
         const body = {
