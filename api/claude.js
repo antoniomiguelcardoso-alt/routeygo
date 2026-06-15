@@ -25,14 +25,14 @@ module.exports = async function handler(req, res) {
       return res.status(500).json({ error: "GEMINI_API_KEY not configured" });
     }
 
-    // Corrigido para o modelo atual correto
+    // Modelos oficiais ativos e funcionais
     const modelCandidates = [
       { name: "gemini-2.0-flash" },
       { name: "gemini-1.5-flash" },
-      { name: "gemini-1.0-pro" }
+      { name: "gemini-1.5-pro" }
     ];
     
-    const endpointOrder = ["generateContent"]; // O v1beta2 usa maioritariamente generateContent
+    const endpointOrder = ["generateContent"];
     let finalText = "";
     let lastError = null;
     let lastStatus = 500;
@@ -41,9 +41,9 @@ module.exports = async function handler(req, res) {
 
     outer: for (const model of modelCandidates) {
       for (const action of endpointOrder) {
+        // Atualizado para a API estável v1beta
         const url = `https://generativelanguage.googleapis.com/v1beta/models/${model.name}:${action}?key=${apiKey}`;
         
-        // Estrutura padrão para o endpoint generateContent
         const body = {
           contents: [{ parts: [{ text: prompt }] }],
           generationConfig: {
@@ -73,14 +73,10 @@ module.exports = async function handler(req, res) {
           body: rawText,
         };
         attempts.push(attempt);
-        console.log(`Model=${model.name} Action=${action} Status=${response.status} Body=${rawText}`);
+        console.log(`Model=${model.name} Action=${action} Status=${response.status}`);
 
         if (response.ok) {
-          const text =
-            data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-            data?.candidates?.[0]?.content?.[0]?.text ||
-            data?.text ||
-            "";
+          const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
           if (text.trim()) {
             finalText = text;
             lastModel = `${model.name}:${action}`;
