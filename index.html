@@ -1,1 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Routeygo - Roteiro Perfeito</title>
+    <style>
+        body { font-family: sans-serif; background: #0f172a; color: white; padding: 40px; text-align: center; }
+        .card { background: #1e293b; max-width: 500px; margin: 0 auto; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        button { background: #10b981; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-size: 16px; cursor: pointer; font-weight: bold; }
+        button:hover { background: #059669; }
+        #resultado { margin-top: 20px; text-align: left; background: #0f172a; padding: 15px; border-radius: 6px; display: none; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
 
+    <div class="card">
+        <h2>Roteiro Perfeito 🎒</h2>
+        <p>Clique abaixo para testar a ligação direta à API online.</p>
+        
+        <button id="btnGerar">Gerar Roteiro de Teste</button>
+        <div id="resultado">A processar com Gemini 2.0 Flash...</div>
+    </div>
+
+    <script>
+        document.getElementById('btnGerar').addEventListener('click', async () => {
+            const resDiv = document.getElementById('resultado');
+            resDiv.style.display = 'block';
+            resDiv.innerText = 'A ligar à API em produção...';
+
+            try {
+                const response = await fetch('/api/claude', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: 'Dá-me 3 locais obrigatórios para fotografar em Vigo.' })
+                });
+                
+                const data = await response.json();
+                if (data.text) {
+                    resDiv.innerText = data.text;
+                } else {
+                    resDiv.innerText = 'Erro na resposta: ' + JSON.stringify(data);
+                }
+            } catch (err) {
+                resDiv.innerText = 'Erro ao ligar ao servidor: ' + err.message;
+            }
+        });
+    </script>
+</body>
+</html>
