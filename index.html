@@ -3,149 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Routeygo - O teu Roteiro Perfeito</title>
+    <title>Routeygo - Planeamento de Itinerários Inteligentes</title>
     <style>
         :root {
-            --bg-main: #0f172a;
-            --bg-card: #1e293b;
-            --accent: #10b981;
-            --accent-hover: #059669;
-            --text: #f8fafc;
+            --bg-dark: #0b0f19;
+            --bg-card: #151f32;
+            --bg-input: #1e293b;
+            --primary: #10b981;
+            --primary-hover: #059669;
+            --text-main: #f8fafc;
             --text-muted: #94a3b8;
+            --border: #334155;
         }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-main);
-            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            min-height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
         }
-        .container {
-            background-color: var(--bg-card);
-            max-width: 600px;
+
+        .wrapper {
             width: 100%;
-            padding: 40px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+            max-width: 650px;
+            padding: 20px;
+            box-sizing: border-box;
         }
-        h1 {
-            font-size: 2rem;
-            margin-bottom: 8px;
-            color: var(--text);
+
+        .brand {
             text-align: center;
+            margin-bottom: 30px;
         }
-        .subtitle {
+
+        .brand h1 {
+            font-size: 2.5rem;
+            margin: 0 0 10px 0;
+            letter-spacing: -0.05em;
+        }
+
+        .brand p {
             color: var(--text-muted);
-            text-align: center;
-            margin-bottom: 32px;
-            font-size: 0.95rem;
+            margin: 0;
+            font-size: 1.05rem;
         }
+
+        .main-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 35px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.5);
+        }
+
         .form-group {
-            margin-bottom: 20px;
-            text-align: left;
+            margin-bottom: 24px;
         }
+
         label {
             display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
             font-size: 0.9rem;
-            color: var(--text);
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-main);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
-        input, select {
+
+        input[type="text"], select {
             width: 100%;
-            padding: 12px;
-            background-color: var(--bg-main);
-            border: 1px solid #334155;
-            border-radius: 8px;
-            color: var(--text);
-            font-size: 1rem;
-            box-sizing: border-box;
-            transition: border-color 0.2s;
-        }
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--accent);
-        }
-        button {
-            width: 100%;
-            background-color: var(--accent);
-            color: white;
-            border: none;
             padding: 14px;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border);
             border-radius: 8px;
+            color: var(--text-main);
             font-size: 1rem;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+        }
+
+        input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+        }
+
+        .btn-submit {
+            width: 100%;
+            background-color: var(--primary);
+            color: #ffffff;
+            border: none;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: background-color 0.2s ease;
             margin-top: 10px;
         }
-        button:hover {
-            background-color: var(--accent-hover);
+
+        .btn-submit:hover {
+            background-color: var(--primary-hover);
         }
-        button:disabled {
-            background-color: #334155;
+
+        .btn-submit:disabled {
+            background-color: var(--border);
+            color: var(--text-muted);
             cursor: not-allowed;
         }
-        .output-box {
+
+        .status-message {
+            margin-top: 25px;
+            text-align: center;
+            font-weight: 500;
+            color: var(--primary);
+            display: none;
+        }
+
+        .result-panel {
             margin-top: 30px;
-            background-color: var(--bg-main);
-            border: 1px solid #334155;
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border);
             border-radius: 8px;
-            padding: 20px;
-            text-align: left;
+            padding: 25px;
             display: none;
             white-space: pre-wrap;
-            line-height: 1.6;
-        }
-        .loading {
-            color: var(--accent);
-            font-weight: 500;
-            text-align: center;
-            display: none;
-            margin-top: 20px;
+            line-height: 1.7;
+            font-size: 1rem;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>Routeygo 🎒</h1>
-        <p class="subtitle">Planeia a tua próxima aventura fotográfica ou cultural instantaneamente</p>
-        
-        <div class="form-group">
-            <label for="destino">Destino / Cidade</label>
-            <input type="text" id="destino" placeholder="Ex: Vigo, Guimarães, Porto..." required>
+    <div class="wrapper">
+        <div class="brand">
+            <h1>Routeygo 🎒</h1>
+            <p>Gere roteiros personalizados e otimizados instantaneamente</p>
         </div>
 
-        <div class="form-group">
-            <label for="dias">Duração (Dias)</label>
-            <select id="dias">
-                <option value="1">1 Dia</option>
-                <option value="2">2 Dias</option>
-                <option value="3">3 Dias</option>
-                <option value="5">5 Dias</option>
-                <option value="7">1 Semana</option>
-            </select>
-        </div>
+        <div class="main-card">
+            <div class="form-group">
+                <label for="destino">Destino pretendido</label>
+                <input type="text" id="destino" placeholder="Ex: Vigo, Guimarães, Chaves..." required>
+            </div>
 
-        <div class="form-group">
-            <label for="estilo">Estilo de Viagem</label>
-            <select id="estilo">
-                <option value="fotografia de paisagem e arquitetura de pedra">Fotografia (Paisagem/Arquitetura)</option>
-                <option value="cultural e histórico detalhado">Cultural & Histórico</option>
-                <option value="gastronómico e relaxado">Gastronómico / Lazer</option>
-                <option value="aventura e natureza">Natureza & Aventura</option>
-            </select>
-        </div>
+            <div class="form-group">
+                <label for="dias">Duração da Estadia</label>
+                <select id="dias">
+                    <option value="1">1 Dia</option>
+                    <option value="2">2 Dias</option>
+                    <option value="3">3 Dias</option>
+                    <option value="5">5 Dias</option>
+                    <option value="7">1 Semana</option>
+                </select>
+            </div>
 
-        <button id="btnGerar">Gerar Itinerário Inteligente</button>
-        
-        <div id="loading" class="loading">A construir o teu roteiro personalizado...</div>
-        <div id="resultado" class="output-box"></div>
+            <div class="form-group">
+                <label for="estilo">Foco do Itinerário</label>
+                <select id="estilo">
+                    <option value="fotografia de paisagem e arquitetura tradicional de pedra">Fotografia (Paisagem & Arquitetura)</option>
+                    <option value="património cultural, monumentos e história medieval">Cultural & Histórico</option>
+                    <option value="gastronomia local, vinhos e pontos de lazer">Gastronómico & Lazer</option>
+                    <option value="trilhos, natureza e exploração ao ar livre">Natureza & Aventura</option>
+                </select>
+            </div>
+
+            <button id="btnGerar" class="btn-submit">Criar Roteiro Personalizado</button>
+
+            <div id="status" class="status-message">A processar o pedido com os servidores Gemini...</div>
+            <div id="resultado" class="result-panel"></div>
+        </div>
     </div>
 
     <script>
@@ -155,43 +187,48 @@
             const estilo = document.getElementById('estilo').value;
             
             const btn = document.getElementById('btnGerar');
-            const loader = document.getElementById('loading');
+            const statusDiv = document.getElementById('status');
             const resDiv = document.getElementById('resultado');
 
             if (!destino) {
-                alert('Por favor, introduz um destino.');
+                alert('Por favor, introduza um destino válido.');
                 return;
             }
 
+            // Bloquear UI durante a geração
             btn.disabled = true;
-            loader.style.display = 'block';
+            statusDiv.style.display = 'block';
             resDiv.style.display = 'none';
+            statusDiv.innerText = 'A estruturar plano de viagem com o Gemini 2.0 Flash...';
 
-            const promptConstruido = `Gera um itinerário detalhado de ${dias} dia(s) para ${destino}, focado estritamente em ${estilo}. Inclui dicas práticas de locais e horários ideais.`;
+            // Construção inteligente do prompt
+            const promptFinal = `Gera um itinerário completo e detalhado de ${dias} dia(s) para viajar em ${destino}. O plano deve ser focado especificamente em ${estilo}. Inclui sugestões de locais exatos para visitar e dicas de logística.`;
 
             try {
                 const response = await fetch('/api/claude', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ prompt: promptConstruido })
+                    body: JSON.stringify({ prompt: promptFinal })
                 });
                 
                 const data = await response.json();
                 
-                loader.style.display = 'none';
+                statusDiv.style.display = 'none';
                 btn.disabled = false;
                 resDiv.style.display = 'block';
 
                 if (data.text) {
                     resDiv.innerText = data.text;
+                } else if (data.error) {
+                    resDiv.innerHTML = `<span style="color: #ef4444; font-weight: bold;">Limite de Chave Atingido:</span><br><br>O site está operacional, mas a cota diária gratuita da chave API da Google foi esgotada. Por favor, tente novamente amanhã ou atualize o plano no Google AI Studio.`;
                 } else {
-                    resDiv.innerText = 'Nota técnica: A API respondeu mas a cota da chave Google pode estar esgotada hoje. Mensagem: ' + (data.error || 'Erro desconhecido');
+                    resDiv.innerText = 'Resposta inesperada do servidor backend.';
                 }
             } catch (err) {
-                loader.style.display = 'none';
+                statusDiv.style.display = 'none';
                 btn.disabled = false;
                 resDiv.style.display = 'block';
-                resDiv.innerText = 'Erro crítico ao ligar ao servidor: ' + err.message;
+                resDiv.innerText = 'Erro de rede ao contactar a API: ' + err.message;
             }
         });
     </script>
